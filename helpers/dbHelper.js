@@ -13,20 +13,17 @@ module.exports = {
    * already exist
    */
   ensureDatabase: () => {
-    const dbExists = fs.existsSync(dbFile);
     const db = new sqlite3.Database(dbFile);
     const createSubscriptionStatement =
-      'CREATE TABLE Subscription (' +
+      'CREATE TABLE IF NOT EXISTS Subscription (' +
       'SubscriptionId TEXT NOT NULL, ' +
       'UserAccountId TEXT NOT NULL' +
       ')';
 
     db.serialize(() => {
-      if (!dbExists) {
-        db.run(createSubscriptionStatement, (error) => {
-          if (error) throw error;
-        });
-      }
+      db.run(createSubscriptionStatement, (error) => {
+        if (error) throw error;
+      });
     });
 
     db.close();
